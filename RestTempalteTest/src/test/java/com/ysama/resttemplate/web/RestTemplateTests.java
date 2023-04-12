@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -56,6 +58,13 @@ public class RestTemplateTests {
         User user = restTemplate.getForObject(url, User.class);
 
         log.info(String.valueOf(user));
+    }
+
+    @Test
+    void testHeaderContentType() {
+        String url = "http://localhost:8080/get-user";
+        HttpHeaders httpHeaders = restTemplate.headForHeaders(url);
+        Assertions.assertTrue(httpHeaders.getContentType().includes(MediaType.APPLICATION_JSON));
     }
 
 
