@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ysama.resttemplate.entity.User;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.Charsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectFactory;
@@ -14,10 +15,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.Objects;
+
+import static org.apache.commons.codec.binary.Base64.encodeBase64;
 
 @SpringBootTest
 @Slf4j
@@ -121,5 +125,42 @@ public class RestTemplateTests {
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
         log.info(response.toString());
     }
+
+    @Test
+    void testSimplePutWithExchange() {
+        String url = "http://localhost:8080/update-user";
+        HttpEntity<User> request = new HttpEntity<>(new User().setId(1003).setName("Louise"));
+        // no ResponseBody
+        restTemplate.exchange(url, HttpMethod.PUT, request, Void.class);
+    }
+
+    @Test
+    void testPutWithCallBack() {
+        String url = "http://localhost:8080/update-user";
+        User updatedUser = new User().setId(1003).setName("Louise");
+        restTemplate.execute(url,
+                HttpMethod.PUT,
+                requestCallback(updatedUser),
+                clientHttpResponse -> null);
+    }
+
+    RequestCallback requestCallback(final User updatedUser) {
+        return clientHttpRequest -> {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(clientHttpRequest.getBody(), updatedUser);
+            clientHttpRequest.getHeaders().add(
+                    HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE
+            );
+            clientHttpRequest.getHeaders().add(
+                    HttpHeaders.AUTHORIZATION, "Basic " + getBase64EncodedLogPass()
+            );
+        };
+    }
+    private String getBase64EncodedLogPass() {
+        final String logPass = "user1:user1Pass";
+        final byte[] authHeaderBytes = encodeBase64(logPass.getBytes(Charsets.US_ASCII));
+        return new String(authHeaderBytes, Charsets.US_ASCII);
+    }
+
 
 }
