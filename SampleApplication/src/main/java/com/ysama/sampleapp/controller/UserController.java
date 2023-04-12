@@ -1,10 +1,11 @@
 package com.ysama.sampleapp.controller;
 
 import com.ysama.sampleapp.entity.User;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -19,9 +20,15 @@ public class UserController {
 
         return user;
     }
-
     @PostMapping("/add-user")
     public User addUser(@RequestBody User user) {
         return user;
+    }
+
+
+    @RequestMapping("/add-user-1")
+    public ResponseEntity<User> addUser1(@Nullable @RequestBody User user) {
+        return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT).header("location","https://bilibili.com")
+                .body(user);
     }
 }

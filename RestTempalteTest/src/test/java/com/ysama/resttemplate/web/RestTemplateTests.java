@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+
 @SpringBootTest
 @Slf4j
 public class RestTemplateTests {
@@ -74,6 +76,17 @@ public class RestTemplateTests {
         Assertions.assertNotNull(user);
         log.info(user.toString());
     }
+    @Test
+    void testPostReturnLocation() {
+        String url = "http://localhost:8080/add-user-1";
+        HttpEntity<User> request = new HttpEntity<>(new User().setId(1003).setName("Louise"));
+
+        URI uri = restTemplate.postForLocation(url, request);
+        Assertions.assertNotNull(uri);
+        log.info(uri.toString());
+    }
+
+
 
 
 }
