@@ -31,4 +31,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.TEMPORARY_REDIRECT).header("location","https://bilibili.com")
                 .body(user);
     }
+
+    @PostMapping("login")
+    public String login(@RequestParam("name") String name,
+                        @RequestParam("password") String password) {
+        return String.format("Name: %s, Password: %s", name, password);
+    }
 }

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -100,5 +102,24 @@ public class RestTemplateTests {
         Assertions.assertEquals(user.getName(), "Louise");
     }
 
+    @Test
+    void testSubmit() {
+        String url = "http://localhost:8080/login";
+        // 1.
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        // 2.
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("name", "ysama");
+        map.add("password", "123456");
+        // 3.
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        // 4.
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                url, request, String.class);
+
+        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        log.info(response.toString());
+    }
 
 }
