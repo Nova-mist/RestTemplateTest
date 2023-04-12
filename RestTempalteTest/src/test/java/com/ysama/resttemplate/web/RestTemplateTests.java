@@ -15,6 +15,7 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.Objects;
 
 @SpringBootTest
 @Slf4j
@@ -63,7 +64,7 @@ public class RestTemplateTests {
     void testHeaderContentType() {
         String url = "http://localhost:8080/get-user";
         HttpHeaders httpHeaders = restTemplate.headForHeaders(url);
-        Assertions.assertTrue(httpHeaders.getContentType().includes(MediaType.APPLICATION_JSON));
+        Assertions.assertTrue(Objects.requireNonNull(httpHeaders.getContentType()).includes(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -86,7 +87,18 @@ public class RestTemplateTests {
         log.info(uri.toString());
     }
 
+    @Test
+    void testExchange() {
+        String url = "http://localhost:8080/add-user";
+        HttpEntity<User> request = new HttpEntity<>(new User().setId(1003).setName("Louise"));
+        // return ResponseEntity not Object or URI, more generic
+        ResponseEntity<User> response = restTemplate
+                .exchange(url, HttpMethod.POST, request, User.class);
+        User user = response.getBody();
 
+        Assertions.assertNotNull(user);
+        Assertions.assertEquals(user.getName(), "Louise");
+    }
 
 
 }
