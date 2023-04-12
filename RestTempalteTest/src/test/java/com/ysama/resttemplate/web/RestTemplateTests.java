@@ -162,5 +162,13 @@ public class RestTemplateTests {
         return new String(authHeaderBytes, Charsets.US_ASCII);
     }
 
+    @Test
+    void testDelete() {
+        String url = "http://localhost:8080/delete-user";
+
+        // no response
+        restTemplate.delete(url);
+    }
+
 
 }
