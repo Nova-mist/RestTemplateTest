@@ -4,6 +4,7 @@ package com.ysama.resttemplate.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ysama.resttemplate.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,14 @@ public class RestTemplateTests {
         Assertions.assertNotNull(name.asText());
 
         log.info(name.asText());
+    }
+
+    @Test
+    void testGetPojoInsteadOfJson() {
+        String url = "http://localhost:8080/get-user";
+        User user = restTemplate.getForObject(url, User.class);
+
+        log.info(String.valueOf(user));
     }
 
 
