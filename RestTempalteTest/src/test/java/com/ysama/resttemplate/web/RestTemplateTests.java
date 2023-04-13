@@ -19,6 +19,7 @@ import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import static org.apache.commons.codec.binary.Base64.encodeBase64;
@@ -158,8 +159,8 @@ public class RestTemplateTests {
     }
     private String getBase64EncodedLogPass() {
         final String logPass = "user1:user1Pass";
-        final byte[] authHeaderBytes = encodeBase64(logPass.getBytes(Charsets.US_ASCII));
-        return new String(authHeaderBytes, Charsets.US_ASCII);
+        final byte[] authHeaderBytes = encodeBase64(logPass.getBytes(StandardCharsets.ISO_8859_1));
+        return new String(authHeaderBytes, StandardCharsets.ISO_8859_1);
     }
 
     @Test
